@@ -12,6 +12,19 @@ class Trick:
         trick = 0
 		# Add player's cards to community cards
         all_cards = self.player_cards + self.communityCards
+        
+        for i in range(len(all_cards)):
+            if all_cards[i].value == 'Jack':
+                all_cards[i].value = 11
+            elif all_cards[i].value == 'Queen':
+                all_cards[i].value = 12
+            elif all_cards[i].value == 'King':
+                all_cards[i].value = 13
+            elif all_cards[i].value == 'Ace':
+                all_cards[i].value = 14
+            else:
+                all_cards[i].value = int(all_cards[i].value)
+
         # Sort cards by value
         all_cards.sort(key=lambda x: x.value)
         # Check for straight flush
@@ -75,6 +88,9 @@ class Trick:
         for i in range(0, len(all_cards) - 4):
             if all_cards[i].value == all_cards[i + 1].value - 1 == all_cards[i + 2].value - 2 == all_cards[i + 3].value - 3 == all_cards[i + 4].value - 4:
                 return True
+        if all_cards[0].value == 2 and all_cards[1].value == 3 and all_cards[2].value == 4 and all_cards[3].value == 5 and all_cards[len(all_cards)].value == 14:
+            return True
+        
         return False
     
     def check_three_of_a_kind(self, all_cards):
