@@ -33,17 +33,19 @@ class Hand(object):
         self.currentBet = self.bigBlind
         self.set_blinds(players)
 
+        self.deal_cards(players, deck)
+
         betting_rounds = ["PreFlop", "PostFlop", "PostTurn", "PostRiver"]
         
         for betting_round in betting_rounds:
             if betting_round != "PreFlop":
                 self.currentBet = 0
-            if len(self.players_in_hand) > 1 and len(self.communityCards) < 5:
+            if len(self.players_in_hand) > 1 and len(self.communityCards) < 5 and betting_round != "PostRiver":
                 self.run_betting_round(betting_round)
                 if betting_round == "PreFlop":
-                    self.communityCards.append(deck.pick_n_cards(3))
+                    self.communityCards += deck.pick_n_cards(3)
                 else:
-                    self.communityCards.append(deck.pick_n_cards(1))
+                    self.communityCards += deck.pick_n_cards(1)
                 print("Community Cards: ", self.communityCards)
 
             else:
@@ -83,7 +85,7 @@ class Hand(object):
         """
         # Determine winner
         winner = self.players_in_hand[0]
-        winner.get_trick(self.communityCards)
+        winner.get_hand_rank(self.communityCards)
         for player in self.players_in_hand:
             player.trick = player.get_trick(self.communityCards)
             if player.trick > winner.trick:
@@ -152,3 +154,17 @@ class Hand(object):
         big_blind_player.ChipStack -= self.bigBlind
         big_blind_player.isBigBlind = True
         big_blind_player.bet("PreFlop", self.bigBlind)
+
+    def deal_cards(self, players, deck):
+        """
+        Deals two cards to each player participating in the hand.
+
+        Args:
+            players: A list of players participating in the hand.
+            deck: The deck of cards used in the game.
+
+        Returns:
+            None
+        """
+        for player in players:
+            player.Cards = deck.deal_cards(player)

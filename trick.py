@@ -3,7 +3,6 @@ class Trick:
         self.player_cards = []
         self.communityCards = []
 
-
     def get_trick(self, player_cards, community_cards):
 
         self.player_cards = player_cards

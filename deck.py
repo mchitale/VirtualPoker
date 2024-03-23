@@ -36,8 +36,8 @@ class Deck(object):
 			list: A list of cards dealt to the player.
 		"""
 		cards = []
-		cards[1] = self.card_deck.pop()
-		cards[2] = self.card_deck.pop()
+		cards.append(self.card_deck.pop())
+		cards.append(self.card_deck.pop())
 		return cards
 
 	def burn_card(self):

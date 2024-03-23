@@ -67,7 +67,7 @@ class Player(object):
 		for card in self.Cards:
 			print(card.value+" of"+ card.suit)
 	
-	def get_trick(self, community_cards):
+	def get_hand_rank(self, community_cards):
 		"""
 		Args:
 			communityCards (list): A list of Card objects representing the community cards.
@@ -75,6 +75,7 @@ class Player(object):
 		Returns:
 			int: The trick value of the player's hand.
 		"""
+		print([(card.value, card.suit) for card in self.Cards])
 		return self.trick.get_trick(self.Cards, community_cards)
 
 	def get_curr_bet(self, betting_round):
