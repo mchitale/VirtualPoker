@@ -1,6 +1,6 @@
-from deck import Deck
-from player import Player
-from hand import Hand
+from src.deck import Deck
+from src.player import Player
+from src.hand import Hand
 
 """
 
@@ -39,7 +39,7 @@ class Game(object):
 			# logic of what goes on in each hand handled by Hand class
 			hand.start_hand(players, deck)
 			# end hand
-			hand.end_hand()
+			#hand.end_hand()
 			self.numHands += 1
 
 			hand = None

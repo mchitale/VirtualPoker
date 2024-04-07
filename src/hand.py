@@ -15,6 +15,8 @@ class Hand(object):
         self.players_in_hand = []
         self.smallBlindIndex = 0 + num_hands
         self.bigBlindIndex = 1 + num_hands
+        self.trick_dict = {9: "Straight Flush", 8: "Four of a Kind", 7: "Full House", 6: "Flush", 5: "Straight", 4: "Three of a Kind", 3: "Two Pair", 2: "Pair", 1: "High Card"}
+                           
 	
     def start_hand(self, players, deck):
         """
@@ -38,21 +40,42 @@ class Hand(object):
         betting_rounds = ["PreFlop", "PostFlop", "PostTurn", "PostRiver"]
         
         for betting_round in betting_rounds:
+            # Reset current bet if new round
             if betting_round != "PreFlop":
                 self.currentBet = 0
-            if len(self.players_in_hand) > 1 and len(self.communityCards) < 5 and betting_round != "PostRiver":
+
+            # Run betting round and deal community cards
+            if len(self.players_in_hand) > 1 and len(self.communityCards) < 5:
                 self.run_betting_round(betting_round)
+                
                 if betting_round == "PreFlop":
                     self.communityCards += deck.pick_n_cards(3)
                 else:
                     self.communityCards += deck.pick_n_cards(1)
                 print("Community Cards: ", self.communityCards)
+            
+            # one betting round after the river card is dealt i.e 5 community cards on the table
+            elif betting_round == "PostRiver":
+                self.run_betting_round(betting_round)
 
+            # If only one player left in the hand, end the hand
             else:
                 self.end_hand()
-                break
+                return
 
-   
+        self.end_hand()
+
+    def one_player_left(self):
+        """
+        Checks if only one player is left in the hand.
+
+        Args:
+            None
+
+        Returns:
+            bool: True if only one player is left in the hand, False otherwise.
+        """
+        return len(self.players_in_hand) == 1
 
     def end_hand(self):
         """
@@ -65,13 +88,17 @@ class Hand(object):
             None
         """
         # Determine winner
-        winner = self.determine_winner()
-        winner.stack += self.Pot
+        if self.one_player_left():
+            winner = self.players_in_hand[0]
+        else:
+            winner = self.determine_winner()
+        print(winner.Name + " wins the hand with a " + self.trick_dict[winner.trick] + " and wins " + self.Pot + " chips!")
+        winner.ChipStack += self.Pot
         self.Pot = 0
         self.communityCards = []
         self.currentBet = 0
         self.players_in_hand = []
-        print(winner.Name + " wins the hand!")
+        
     
     def determine_winner(self):
         """
@@ -87,7 +114,7 @@ class Hand(object):
         winner = self.players_in_hand[0]
         winner.get_hand_rank(self.communityCards)
         for player in self.players_in_hand:
-            player.trick = player.get_trick(self.communityCards)
+            player.trick = player.get_hand_rank(self.communityCards)
             if player.trick > winner.trick:
                 winner = player
         return winner
@@ -125,11 +152,16 @@ class Hand(object):
 
     def check_invalid_move(self, player, move, betting_round):
         moves = ["check", "call", "fold", "bet"]
+        move_amt = move.split(" ")
+        
+        if len(move_amt) == 2:
+            move = move_amt[0]
+            amount = move_amt[1]
 
         return move not in moves or \
                 (self.currentBet > player.get_curr_bet(betting_round) and move == "check") or \
                     (move == "call" and player.ChipStack < self.currentBet) or \
-                        (move == "bet" and player.ChipStack < self.currentBet) or \
+                        (move == "bet" and (player.ChipStack < self.currentBet or int(amount) < self.currentBet)) or \
                             (move == "call" and player.isBigBlind == True and betting_round == "PreFlop")
 
 

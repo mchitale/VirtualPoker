@@ -88,7 +88,9 @@ class Trick:
         for i in range(0, len(all_cards) - 4):
             if all_cards[i].value == all_cards[i + 1].value - 1 == all_cards[i + 2].value - 2 == all_cards[i + 3].value - 3 == all_cards[i + 4].value - 4:
                 return True
-        if all_cards[0].value == 2 and all_cards[1].value == 3 and all_cards[2].value == 4 and all_cards[3].value == 5 and all_cards[len(all_cards)].value == 14:
+        
+        # Check for A-2-3-4-5 straight
+        if all_cards[0].value == 2 and all_cards[1].value == 3 and all_cards[2].value == 4 and all_cards[3].value == 5 and all_cards[len(all_cards)-1].value == 14:
             return True
         
         return False

@@ -1,4 +1,4 @@
-from trick import Trick
+from src.trick import Trick
 """
 
 This may need to be modelled as an observer class.
